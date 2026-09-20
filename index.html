@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oussama El Messaoudi — Ingénierie Électronique & Systèmes Embarqués</title>
+<meta name="description" content="Portfolio d'Oussama El Messaoudi — BUT GEII, IUT de Troyes. Électronique embarquée, automatisme industriel, systèmes embarqués.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root {
+  --bg:       #0d1117;
+  --bg2:      #0f1420;
+  --surface:  #161b27;
+  --surface2: #1c2333;
+  --border:   #21293d;
+  --border2:  #2a3450;
+
+  --text:     #cdd5e0;
+  --text-hi:  #f0f4fa;
+  --muted:    #6b7592;
+  --dim:      #384060;
+
+  /* Palette douce — bleu ardoise + accent cyan-froid */
+  --accent:   #58a6ff;
+  --accent2:  #3d7bd4;
+  --teal:     #39d0c0;
+  --amber:    #d4a84b;
+  --green:    #3fb950;
+  --red:      #e05c6a;
+
+  --radius:   6px;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Sora', sans-serif;
+}
+
+/* ══════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img { display:block; max-width:100%; height:auto; }
+a { color:inherit; text-decoration:none; }
+button { font-family:inherit; }
+
+/* ══════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════ */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 clamp(1rem,5vw,3.5rem);
+  background:rgba(13,17,23,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s, background .3s;
+}
+nav.scrolled {
+  border-bottom-color:var(--border);
+  background:rgba(13,17,23,.96);
+}
+.nav-brand {
+  font-family:var(--mono);
+  font-size:.8rem;
+  color:var(--accent);
+  letter-spacing:.06em;
+  display:flex; align-items:center; gap:.6rem;
+}
+.nav-brand-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--teal);
+  animation:blink 3s infinite;
+}
+@keyframes blink { 0%,90%,100%{opacity:1} 95%{opacity:.2} }
+
+.nav-links { display:flex; gap:.25rem; list-style:none; }
+.nav-links a {
+  font-size:.8rem; font-weight:500; color:var(--muted);
+  padding:.4rem .85rem; border-radius:var(--radius);
+  transition:color .2s, background .2s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color:var(--text-hi); background:var(--surface2);
+}
+.nav-cta {
+  font-family:var(--mono); font-size:.72rem; font-weight:500;
+  color:var(--accent); border:1px solid var(--accent);
+  padding:.38rem 1.1rem; border-radius:var(--radius);
+  transition:background .2s, color .2s;
+}
+.nav-cta:hover { background:var(--accent); color:var(--bg); }
+
+/* Burger */
+.burger {
+  display:none; flex-direction:column; gap:5px;
+  background:none; border:none; cursor:pointer; padding:.4rem;
+}
+.burger span {
+  display:block; width:20px; height:1.5px;
+  background:var(--muted); border-radius:2px;
+  transition:transform .25s, opacity .25s;
+}
+.burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity:0; }
+.burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile nav panel */
+.nav-panel {
+  display:none; position:fixed;
+  top:60px; left:0; right:0; z-index:899;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:1rem clamp(1rem,5vw,3.5rem);
+  flex-direction:column; gap:.3rem;
+}
+.nav-panel.open { display:flex; }
+.nav-panel a {
+  font-size:.95rem; font-weight:500; color:var(--muted);
+  padding:.75rem 0; border-bottom:1px solid var(--border);
+  transition:color .2s;
+}
+.nav-panel a:last-child { border-bottom:none; }
+.nav-panel a:hover { color:var(--accent); }
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+#hero {
+  min-height:100vh;
+  display:flex; align-items:center;
+  padding:calc(60px + 4rem) clamp(1rem,6vw,3.5rem) 4rem;
+  position:relative; overflow:hidden;
+}
+
+/* Canvas starfield */
+#hero-canvas {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+}
+
+/* Grid overlay */
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size:52px 52px;
+  opacity:.18;
+  mask-image:radial-gradient(ellipse 75% 90% at 70% 40%, black 0%, transparent 75%);
+}
+
+/* Glow orb */
+.hero-orb {
+  position:absolute; border-radius:50%; pointer-events:none; z-index:0;
+  filter:blur(90px);
+}
+.orb-1 { width:550px; height:550px; right:-80px; top:-120px; background:rgba(88,166,255,.06); }
+.orb-2 { width:350px; height:350px; left:5%; bottom:5%; background:rgba(57,208,192,.05); }
+
+.hero-content {
+  position:relative; z-index:1;
+  max-width:1100px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:3rem; align-items:center;
+}
+.hero-left {}
+
+.hero-kicker {
+  font-family:var(--mono); font-size:.72rem; color:var(--teal);
+  margin-bottom:1.5rem; display:flex; align-items:center; gap:.7rem;
+  opacity:0; animation:fadeUp .7s .2s forwards;
+}
+.hero-kicker::before {
+  content:''; width:28px; height:1px; background:var(--teal); flex-shrink:0;
+}
+
+.hero-name {
+  font-size:clamp(2.4rem,6vw,4.8rem); font-weight:700;
+  line-height:1.05; letter-spacing:-.03em; color:var(--text-hi);
+  margin-bottom:.6rem;
+  opacity:0; animation:fadeUp .7s .35s forwards;
+}
+.hero-name em { font-style:normal; color:var(--accent); }
+
+.hero-title {
+  font-size:clamp(.95rem,2vw,1.15rem); color:var(--muted); font-weight:400;
+  margin-bottom:2rem;
+  opacity:0; animation:fadeUp .7s .5s forwards;
+}
+
+.hero-desc {
+  font-size:.95rem; color:var(--muted); line-height:1.8;
+  max-width:50ch; margin-bottom:2.5rem;
+  opacity:0; animation:fadeUp .7s .65s forwards;
+}
+.hero-desc strong { color:var(--text); }
+
+.hero-chips {
+  display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:2.5rem;
+  opacity:0; animation:fadeUp .7s .8s forwards;
+}
+.chip {
+  font-family:var(--mono); font-size:.63rem;
+  padding:.25rem .7rem; border-radius:4px;
+  border:1px solid var(--border2); color:var(--muted);
+  background:var(--surface);
+  transition:border-color .2s, color .2s;
+}
+.chip:hover { border-color:var(--accent); color:var(--accent); }
+.chip.hl { border-color:var(--teal); color:var(--teal); }
+
+.hero-actions {
+  display:flex; gap:.8rem; flex-wrap:wrap;
+  opacity:0; animation:fadeUp .7s .95s forwards;
+}
+.btn-primary {
+  font-family:var(--mono); font-size:.74rem; font-weight:500;
+  background:var(--accent); color:var(--bg);
+  padding:.65rem 1.5rem; border-radius:var(--radius);
+  border:1px solid var(--accent);
+  transition:opacity .2s; display:inline-block;
+}
+.btn-primary:hover { opacity:.85; }
+.btn-ghost {
+  font-family:var(--mono); font-size:.74rem; font-weight:500;
+  color:var(--text); border:1px solid var(--border2);
+  padding:.65rem 1.5rem; border-radius:var(--radius);
+  transition:border-color .2s, color .2s; display:inline-block;
+}
+.btn-ghost:hover { border-color:var(--text); }
+
+/* Hero right — terminal card */
+.hero-right {
+  opacity:0; animation:fadeLeft .8s .5s forwards;
+}
+.terminal {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.terminal-bar {
+  background:var(--surface2);
+  padding:.65rem 1rem;
+  display:flex; align-items:center; gap:.5rem;
+  border-bottom:1px solid var(--border);
+}
+.tbar-dot { width:11px; height:11px; border-radius:50%; }
+.tbar-dot:nth-child(1) { background:#e05c6a; }
+.tbar-dot:nth-child(2) { background:#d4a84b; }
+.tbar-dot:nth-child(3) { background:#3fb950; }
+.tbar-title {
+  font-family:var(--mono); font-size:.65rem; color:var(--dim);
+  margin-left:auto; letter-spacing:.04em;
+}
+.terminal-body {
+  padding:1.4rem 1.5rem;
+  font-family:var(--mono); font-size:.74rem;
+  line-height:1.9; min-height:280px;
+}
+.t-cm { color:var(--dim); }
+.t-kw { color:#79c0ff; }
+.t-str { color:#a5d6ff; }
+.t-val { color:var(--teal); }
+.t-fn { color:#d2a8ff; }
+.t-ok { color:var(--green); }
+.t-cursor {
+  display:inline-block; width:8px; height:1em;
+  background:var(--accent); vertical-align:text-bottom;
+  animation:blink-cur .9s infinite;
+  margin-left:2px;
+}
+@keyframes blink-cur { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+/* ══════════════════════════════════════════
+   SECTIONS COMMUNES
+══════════════════════════════════════════ */
+section { padding:clamp(3.5rem,8vw,6rem) clamp(1rem,6vw,3.5rem); }
+section:nth-of-type(even) { background:var(--bg2); }
+.max-w { max-width:1100px; margin:0 auto; }
+
+.section-eyebrow {
+  font-family:var(--mono); font-size:.68rem; color:var(--accent);
+  margin-bottom:.8rem; display:flex; align-items:center; gap:.6rem;
+  letter-spacing:.06em;
+}
+.section-eyebrow::before {
+  content:''; width:20px; height:1px; background:var(--accent); flex-shrink:0;
+}
+.section-title {
+  font-size:clamp(1.6rem,4vw,2.6rem); font-weight:700;
+  letter-spacing:-.025em; color:var(--text-hi);
+  margin-bottom:clamp(1.5rem,4vw,3rem); line-height:1.1;
+}
+
+/* Reveal animations */
+.reveal {
+  opacity:0; transform:translateY(28px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity:1; transform:none; }
+.reveal-left {
+  opacity:0; transform:translateX(-28px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.reveal-left.visible { opacity:1; transform:none; }
+
+/* ══════════════════════════════════════════
+   PROFIL / À PROPOS
+══════════════════════════════════════════ */
+.about-grid {
+  display:grid; grid-template-columns:3fr 2fr;
+  gap:clamp(1.5rem,4vw,3.5rem); align-items:start;
+}
+.about-bio { font-size:.97rem; color:var(--muted); line-height:1.85; }
+.about-bio p { margin-bottom:1rem; }
+.about-bio strong { color:var(--text-hi); }
+.about-bio a { color:var(--accent); border-bottom:1px solid rgba(88,166,255,.3); transition:border-color .2s; }
+.about-bio a:hover { border-bottom-color:var(--accent); }
+
+/* BIA highlight */
+.bia-block {
+  margin-top:1.5rem; padding:1.1rem 1.3rem;
+  background:linear-gradient(135deg, rgba(88,166,255,.07), rgba(57,208,192,.05));
+  border:1px solid var(--border2); border-left:3px solid var(--teal);
+  border-radius:0 var(--radius) var(--radius) 0;
+  display:flex; gap:.9rem; align-items:flex-start;
+}
+.bia-icon { font-size:1.4rem; flex-shrink:0; margin-top:.1rem; }
+.bia-text { font-size:.88rem; color:var(--muted); line-height:1.65; }
+.bia-text strong { color:var(--teal); }
+
+.about-sidebar {}
+.sidebar-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; margin-bottom:1rem;
+}
+.sidebar-card-header {
+  padding:.7rem 1rem;
+  background:var(--surface2); border-bottom:1px solid var(--border);
+  font-family:var(--mono); font-size:.63rem; color:var(--muted);
+  letter-spacing:.06em;
+}
+.sidebar-card-body { padding:1rem; }
+.info-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.42rem 0; border-bottom:1px solid var(--border);
+  font-size:.85rem; gap:.5rem;
+}
+.info-row:last-child { border-bottom:none; }
+.info-key { color:var(--muted); flex-shrink:0; }
+.info-val { color:var(--text-hi); font-family:var(--mono); font-size:.75rem; text-align:right; }
+.hab-badge {
+  display:inline-flex; align-items:center; gap:.5rem;
+  margin-top:.8rem; padding:.5rem .9rem;
+  background:rgba(88,166,255,.08); border:1px solid rgba(88,166,255,.3);
+  border-radius:4px; font-size:.82rem; color:var(--accent);
+  font-family:var(--mono);
+}
+
+/* ══════════════════════════════════════════
+   COMPÉTENCES
+══════════════════════════════════════════ */
+.skills-grid {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:1px; background:var(--border); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+  margin-bottom:2rem;
+}
+.skill-cell {
+  background:var(--surface); padding:clamp(1.2rem,3vw,1.8rem);
+  position:relative; overflow:hidden;
+  transition:background .25s;
+}
+.skill-cell::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--accent), var(--teal));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .35s ease;
+}
+.skill-cell:hover { background:var(--surface2); }
+.skill-cell:hover::before { transform:scaleX(1); }
+.skill-cat {
+  font-family:var(--mono); font-size:.62rem; color:var(--accent);
+  margin-bottom:.7rem; letter-spacing:.08em;
+}
+.skill-cell h3 {
+  font-size:.95rem; font-weight:600; color:var(--text-hi);
+  margin-bottom:.9rem; line-height:1.3;
+}
+.skill-items { list-style:none; display:flex; flex-direction:column; gap:.38rem; }
+.skill-items li {
+  font-size:.84rem; color:var(--muted);
+  padding-left:1rem; position:relative; line-height:1.4;
+}
+.skill-items li::before {
+  content:''; position:absolute; left:0; top:.6em;
+  width:4px; height:4px; border-radius:50%; background:var(--teal);
+}
+
+/* Outils visuels */
+.tools-row {
+  display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.5rem;
+}
+.tool-tag {
+  font-family:var(--mono); font-size:.65rem;
+  padding:.25rem .7rem; border-radius:4px;
+  background:var(--surface); border:1px solid var(--border2);
+  color:var(--muted); transition:all .2s;
+}
+.tool-tag:hover { border-color:var(--teal); color:var(--teal); }
+
+/* AC badges */
+.ac-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.5rem;
+}
+.ac-title {
+  font-family:var(--mono); font-size:.63rem; color:var(--muted);
+  margin-bottom:1rem; letter-spacing:.05em;
+}
+.ac-badges { display:flex; flex-wrap:wrap; gap:.45rem; }
+.ac-b {
+  font-family:var(--mono); font-size:.62rem;
+  padding:.22rem .65rem; border-radius:4px;
+  background:var(--bg); border:1px solid var(--border2);
+  color:var(--dim); cursor:default;
+  transition:border-color .2s, color .2s;
+}
+.ac-b:hover { border-color:var(--accent); color:var(--accent); }
+
+/* ══════════════════════════════════════════
+   PROJETS
+══════════════════════════════════════════ */
+.proj-intro {
+  font-size:.97rem; color:var(--muted);
+  max-width:62ch; margin-bottom:clamp(1.5rem,4vw,3rem); line-height:1.8;
+}
+.proj-list { display:flex; flex-direction:column; }
+
+/* Ligne projet */
+.proj-item {
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:.6rem;
+  overflow:hidden;
+  transition:border-color .2s;
+}
+.proj-item.expanded { border-color:var(--accent); }
+
+.proj-header {
+  display:flex; align-items:center; gap:1.2rem;
+  padding:clamp(.9rem,2.5vw,1.4rem) clamp(1rem,3vw,1.8rem);
+  cursor:pointer; background:var(--surface);
+  transition:background .2s; user-select:none;
+}
+.proj-item.expanded .proj-header { background:var(--surface2); }
+.proj-header:hover { background:var(--surface2); }
+
+.proj-num {
+  font-family:var(--mono); font-size:.8rem;
+  color:var(--dim); min-width:2rem; flex-shrink:0;
+}
+.proj-meta { flex:1; min-width:0; }
+.proj-name {
+  font-size:1rem; font-weight:600; color:var(--text-hi);
+  margin-bottom:.25rem; line-height:1.3;
+}
+.proj-tagline { font-size:.82rem; color:var(--muted); line-height:1.4; }
+.proj-pills {
+  display:flex; gap:.4rem; flex-wrap:wrap;
+  margin-left:auto; flex-shrink:0;
+}
+.proj-pill {
+  font-family:var(--mono); font-size:.58rem;
+  padding:.18rem .5rem; border-radius:3px;
+  border:1px solid var(--border2); color:var(--dim);
+  background:var(--bg); white-space:nowrap;
+}
+.proj-chevron {
+  font-size:.75rem; color:var(--dim);
+  flex-shrink:0; margin-left:.5rem;
+  transition:transform .28s ease;
+}
+.proj-item.expanded .proj-chevron { transform:rotate(180deg); }
+
+/* Panneau détail */
+.proj-body {
+  max-height:0; overflow:hidden;
+  transition:max-height .4s cubic-bezier(.4,0,.2,1);
+  background:var(--bg);
+}
+.proj-body.open { max-height:2400px; }
+.proj-body-inner {
+  padding:clamp(1.2rem,3vw,2rem) clamp(1rem,3vw,1.8rem);
+  border-top:1px solid var(--border);
+}
+
+.proj-detail-grid {
+  display:grid; grid-template-columns:2fr 1fr;
+  gap:clamp(1rem,3vw,2rem); align-items:start;
+}
+.detail-section {
+  font-family:var(--mono); font-size:.62rem; color:var(--accent);
+  letter-spacing:.07em; margin-bottom:.6rem; margin-top:1.2rem;
+}
+.detail-section:first-child { margin-top:0; }
+.detail-p { font-size:.88rem; color:var(--muted); line-height:1.78; margin-bottom:.7rem; }
+.detail-p strong { color:var(--text-hi); }
+
+.specs-table { width:100%; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.spec-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.42rem .9rem; border-bottom:1px solid var(--border);
+  font-size:.82rem; gap:.5rem;
+}
+.spec-row:last-child { border-bottom:none; }
+.spec-k { color:var(--muted); }
+.spec-v { font-family:var(--mono); font-size:.72rem; color:var(--teal); text-align:right; }
+
+.livrable {
+  margin-top:1rem; padding:.9rem 1.1rem;
+  background:rgba(63,185,80,.06); border:1px solid rgba(63,185,80,.25);
+  border-radius:var(--radius); font-size:.85rem; color:var(--muted); line-height:1.65;
+}
+.livrable strong { color:var(--green); }
+
+/* Images projet */
+.proj-images {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; margin-top:1.5rem;
+}
+.proj-img-wrap { position:relative; overflow:hidden; background:var(--surface); }
+.proj-img-wrap img {
+  width:100%; aspect-ratio:4/3; object-fit:cover;
+  transition:transform .4s ease, filter .4s ease;
+  filter:saturate(.8);
+}
+.proj-img-wrap:hover img { transform:scale(1.04); filter:saturate(1.1); }
+.proj-img-cap {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:.4rem .6rem;
+  background:linear-gradient(to top, rgba(13,17,23,.9), transparent);
+  font-family:var(--mono); font-size:.62rem; color:rgba(255,255,255,.6);
+}
+
+/* Code block */
+.code-wrap {
+  margin-top:1.5rem; border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--border);
+}
+.code-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.5rem 1rem; background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.code-head-lang { font-family:var(--mono); font-size:.62rem; color:var(--accent); }
+.code-head-copy {
+  font-family:var(--mono); font-size:.6rem; color:var(--dim);
+  background:none; border:none; cursor:pointer; transition:color .2s;
+}
+.code-head-copy:hover { color:var(--text-hi); }
+pre {
+  background:#0a0d14; padding:1.2rem clamp(.8rem,2vw,1.4rem);
+  overflow-x:auto; font-family:var(--mono); font-size:.71rem;
+  line-height:1.75; color:#c8d3f5; max-height:360px;
+}
+.kw{color:#79c0ff} .fn{color:#d2a8ff} .cm{color:#484f6b;font-style:italic}
+.str{color:#a5d6ff} .num{color:#f8894c} .pp{color:#ff7b72} .val{color:var(--teal)}
+
+/* ══════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════ */
+#contact { text-align:center; }
+.contact-title {
+  font-size:clamp(2rem,6vw,4rem); font-weight:700;
+  letter-spacing:-.03em; line-height:1.05; margin-bottom:.8rem; color:var(--text-hi);
+}
+.contact-title em { font-style:normal; color:var(--accent); }
+.contact-sub {
+  font-size:.97rem; color:var(--muted); max-width:50ch;
+  margin:0 auto 3rem; line-height:1.75;
+}
+.contact-grid {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:1px; background:var(--border); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+  max-width:700px; margin:0 auto 2.5rem;
+}
+.contact-card {
+  background:var(--surface); padding:clamp(1.2rem,3vw,1.8rem) 1rem;
+  transition:background .2s;
+  display:flex; flex-direction:column; align-items:center; gap:.4rem;
+}
+.contact-card:hover { background:var(--surface2); }
+.cc-icon { font-size:1.3rem; }
+.cc-label {
+  font-family:var(--mono); font-size:.6rem; color:var(--dim); letter-spacing:.06em;
+}
+.cc-val { font-size:.82rem; color:var(--text-hi); word-break:break-all; text-align:center; }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer {
+  padding:1.5rem clamp(1rem,5vw,3.5rem);
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem;
+  font-family:var(--mono); font-size:.62rem; color:var(--dim);
+}
+
+/* ══════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes fadeLeft {
+  from { opacity:0; transform:translateX(30px); }
+  to   { opacity:1; transform:none; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width:900px) {
+  .hero-content { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .about-grid { grid-template-columns:1fr; }
+  .skills-grid { grid-template-columns:1fr; }
+  .proj-detail-grid { grid-template-columns:1fr; }
+  .proj-pills { display:none; }
+}
+@media (max-width:680px) {
+  .nav-links, .nav-cta { display:none; }
+  .burger { display:flex; }
+  .contact-grid { grid-template-columns:1fr; }
+  .proj-images { grid-template-columns:1fr; }
+}
+@media (max-width:420px) {
+  .hero-name { font-size:2.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="nav-brand">
+    <span class="nav-brand-dot"></span>
+    OEM.dev
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#competences">Compétences</a></li>
+    <li><a href="#projets">Projets</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:oussama.el-messaoudi@etudiant.univ-reims.fr" class="nav-cta">Contact</a>
+  <button class="burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-panel" id="nav-panel">
+  <a href="#about" onclick="closeNav()">À propos</a>
+  <a href="#competences" onclick="closeNav()">Compétences</a>
+  <a href="#projets" onclick="closeNav()">Projets</a>
+  <a href="#contact" onclick="closeNav()">Contact</a>
+</div>
+
+<!-- ═══ HERO ═══════════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="orb-1 hero-orb"></div>
+  <div class="orb-2 hero-orb"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-kicker">BUT GEII · Électronique & Systèmes Embarqués · IUT de Troyes</div>
+      <h1 class="hero-name">Oussama<br><em>El Messaoudi</em></h1>
+      <p class="hero-title">Électronique embarquée &amp; Systèmes industriels</p>
+      <p class="hero-desc">
+        Étudiant en BUT GEII à l'IUT de Troyes — électronique embarquée,
+        automatisme industriel, conception PCB. Titulaire du <strong>BIA</strong>,
+        avec un intérêt particulier pour le secteur aéronautique.
+      </p>
+      <div class="hero-chips">
+        <span class="chip hl">Électronique embarquée</span>
+        <span class="chip hl">Automatisme industriel</span>
+        <span class="chip">Firmware C/C++ bare-metal</span>
+        <span class="chip">KiCad · PCB</span>
+        <span class="chip">GRAFCET · Ladder</span>
+        <span class="chip">Habilité B1V</span>
+        <span class="chip">BIA ✈</span>
+      </div>
+      <div class="hero-actions">
+        <a href="#projets" class="btn-primary">Voir les projets</a>
+        <a href="#contact" class="btn-ghost">Me contacter</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="tbar-dot"></div>
+          <div class="tbar-dot"></div>
+          <div class="tbar-dot"></div>
+          <span class="tbar-title">oem@geii ~ firmware.c</span>
+        </div>
+        <div class="terminal-body" id="terminal-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ À PROPOS ════════════════════════════════════════ -->
+<section id="about">
+  <div class="max-w">
+    <div class="section-eyebrow">Profil</div>
+    <h2 class="section-title reveal">Qui suis-je ?</h2>
+    <div class="about-grid">
+      <div class="about-bio reveal">
+        <p>
+          Étudiant en 2ᵉ année de <strong>B.U.T. GEII</strong> à l'IUT de Troyes,
+          parcours <strong>Électronique et Systèmes Embarqués</strong>.
+          Je travaille aussi bien sur la couche bas niveau — programmation C/C++ sur microcontrôleur,
+          accès direct aux registres, communication I²C — que sur la partie automatisme,
+          avec la programmation d'automates industriels en Ladder et GRAFCET.
+        </p>
+        <p>
+          Ce qui me motive, c'est de voir un système fonctionner de bout en bout :
+          du schéma électrique jusqu'au comportement réel sur maquette ou sur piste.
+          Mes projets couvrent la conception PCB, le firmware embarqué, l'instrumentation
+          et le câblage d'armoires industrielles sous tension réelle.
+        </p>
+        <p>
+          Formation : <strong>Bac général — Maths / Physique-Chimie</strong>,
+          Lycée Camille Claudel, Troyes (2024).
+        </p>
+
+        <div class="bia-block">
+          <span class="bia-icon">✈</span>
+          <div class="bia-text">
+            <strong>Brevet d'Initiation à l'Aéronautique (BIA)</strong><br>
+            Connaissances en mécanique du vol, navigation, météorologie et réglementation aérienne.
+            Un intérêt pour le secteur qui oriente naturellement mes ambitions vers l'embarqué aéronautique.
+          </div>
+        </div>
+      </div>
+
+      <div class="about-sidebar reveal">
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">// identité</div>
+          <div class="sidebar-card-body">
+            <div class="info-row"><span class="info-key">Formation</span><span class="info-val">BUT GEII 2A</span></div>
+            <div class="info-row"><span class="info-key">Parcours</span><span class="info-val">Électronique & Syst. Emb.</span></div>
+            <div class="info-row"><span class="info-key">IUT</span><span class="info-val">Troyes</span></div>
+            <div class="info-row"><span class="info-key">Localisation</span><span class="info-val">Troyes — Mobile France</span></div>
+            <div class="info-row"><span class="info-key">Tél.</span><span class="info-val">07 49 40 30 78</span></div>
+            <div class="hab-badge">⚡ Habilité B1V</div>
+          </div>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">// certifications</div>
+          <div class="sidebar-card-body">
+            <div class="info-row"><span class="info-key">BIA</span><span class="info-val" style="color:var(--teal)">Obtenu ✈</span></div>
+            <div class="info-row"><span class="info-key">Habilitation élec.</span><span class="info-val" style="color:var(--teal)">B1V</span></div>
+            <div class="info-row"><span class="info-key">Permis</span><span class="info-val">B</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPÉTENCES ════════════════════════════════════ -->
+<section id="competences">
+  <div class="max-w">
+    <div class="section-eyebrow">Compétences</div>
+    <h2 class="section-title reveal">Domaines techniques</h2>
+
+    <div class="skills-grid reveal">
+      <div class="skill-cell">
+        <div class="skill-cat">Électronique & Mesure</div>
+        <h3>Conception & Instrumentation</h3>
+        <ul class="skill-items">
+          <li>Conception de PCB sous KiCad — schéma, routage, plans de masse</li>
+          <li>Soudure CMS au four à refusion et traversante au fer</li>
+          <li>Circuits analogiques et numériques</li>
+          <li>Simulation LTspice et SimulIDE</li>
+          <li>Mesures oscilloscope et multimètre</li>
+        </ul>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Programmation embarquée</div>
+        <h3>Firmware & Bas niveau</h3>
+        <ul class="skill-items">
+          <li>C / C++ bare-metal sur ATmega328P — registres, Timers, ADC</li>
+          <li>Communication I²C — VL53L1X et capteurs analogiques</li>
+          <li>Machine à états, gestion d'interruptions</li>
+          <li>PWM fast, multiplexage ADC</li>
+          <li>Débogage sur cible réelle, correcteur proportionnel</li>
+        </ul>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Automatisme industriel</div>
+        <h3>Automates & Câblage</h3>
+        <ul class="skill-items">
+          <li>Lecture de folios, câblage armoire industrielle triphasé 400 V</li>
+          <li>Automates Schneider Electric M221 / M340</li>
+          <li>Programmation Ladder, GRAFCET, blocs TON</li>
+          <li>EcoStruxure Control Expert, Unity Pro</li>
+          <li>VAT, procédures de consignation, EPI électriques</li>
+        </ul>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-cat">Outils & Méthodes</div>
+        <h3>Environnement de travail</h3>
+        <ul class="skill-items">
+          <li>KiCad, LTspice, SimulIDE</li>
+          <li>Suite Office — rédaction de dossiers techniques</li>
+          <li>Analyse fonctionnelle</li>
+          <li>Procédures d'essais et validation</li>
+          <li>Travail en groupe sur projets</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tools-row reveal">
+      <span class="tool-tag">KiCad</span>
+      <span class="tool-tag">LTspice</span>
+      <span class="tool-tag">SimulIDE</span>
+      <span class="tool-tag">EcoStruxure</span>
+      <span class="tool-tag">Unity Pro</span>
+      <span class="tool-tag">C/C++</span>
+      <span class="tool-tag">avr-gcc</span>
+      <span class="tool-tag">Ladder</span>
+      <span class="tool-tag">GRAFCET</span>
+      <span class="tool-tag">Oscilloscope</span>
+      <span class="tool-tag">I²C</span>
+      <span class="tool-tag">PWM</span>
+    </div>
+
+    <div class="ac-wrap reveal" style="margin-top:1.5rem">
+      <div class="ac-title">// Apprentissages critiques BUT GEII validés</div>
+      <div class="ac-badges">
+        <span class="ac-b">AC11.01 — Analyse fonctionnelle</span>
+        <span class="ac-b">AC11.02 — Prototype matériel/logiciel</span>
+        <span class="ac-b">AC11.03 — Dossier de fabrication</span>
+        <span class="ac-b">AC12.01 — Procédure d'essais</span>
+        <span class="ac-b">AC12.02 — Identifier un dysfonctionnement</span>
+        <span class="ac-b">AC12.03 — Décrire un dysfonctionnement</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROJETS ══════════════════════════════════════════ -->
+<section id="projets">
+  <div class="max-w">
+    <div class="section-eyebrow">Réalisations</div>
+    <h2 class="section-title reveal">Projets</h2>
+    <p class="proj-intro reveal">
+      Cinq projets menés en formation, couvrant la conception électronique, la programmation
+      embarquée, l'instrumentation et l'automatisme industriel. Cliquez pour dérouler le détail.
+    </p>
+
+    <div class="proj-list reveal">
+
+      <!-- ── 01 ROBOT ── -->
+      <div class="proj-item" id="p-robot">
+        <div class="proj-header" onclick="toggleProj('robot')">
+          <span class="proj-num">01</span>
+          <div class="proj-meta">
+            <div class="proj-name">Robot suiveur de ligne autonome</div>
+            <div class="proj-tagline">Conception PCB moteur, firmware bare-metal ATmega328P, machine à états, débogage sur piste réelle</div>
+          </div>
+          <div class="proj-pills">
+            <span class="proj-pill">KiCad</span>
+            <span class="proj-pill">C bare-metal</span>
+            <span class="proj-pill">ATmega328P</span>
+            <span class="proj-pill">I²C</span>
+          </div>
+          <span class="proj-chevron">▾</span>
+        </div>
+        <div class="proj-body" id="b-robot">
+          <div class="proj-body-inner">
+            <div class="proj-detail-grid">
+              <div>
+                <div class="detail-section">// Contexte</div>
+                <p class="detail-p">Système autonome et robotique : conception, fabrication et programmation d'un robot mobile capable de suivre une piste, franchir des ruptures de ligne, négocier des virages à 90° et effectuer un arrêt d'urgence face à un obstacle. Réalisé en trinôme — responsable de la <strong>carte moteur et du firmware de navigation</strong>.</p>
+
+                <div class="detail-section">// Hardware — Carte moteur</div>
+                <p class="detail-p">Saisie de schéma et routage KiCad d'une carte de commande moteur basée sur un double pont en H <strong>VNH7070BASTR</strong>. Dimensionnement des pistes de puissance, plans de masse, soudure manuelle CMS.</p>
+
+                <div class="detail-section">// Firmware bare-metal</div>
+                <p class="detail-p">Développement C/C++ sur ATmega328P par manipulation directe des registres, sans couche Arduino. Timers en Fast PWM, multiplexage ADC pour 5 capteurs IR, machine à états complète, intégration LiDAR VL53L1X en I²C (budget 20 ms, arrêt à 15 cm). Correcteur <strong>proportionnel</strong> sur l'erreur gauche-droite.</p>
+
+                <div class="detail-section">// Debug sur piste</div>
+                <p class="detail-p">Identification et correction d'un bug de persistance mémoire dans la machine à états bloquant le robot après le premier virage. Résolu par réinitialisation forcée des variables de phase avant chaque transition d'état.</p>
+
+                <div class="code-wrap">
+                  <div class="code-head">
+                    <span class="code-head-lang">C · ATmega328P — correcteur P + machine à états (extrait)</span>
+                    <button class="code-head-copy" onclick="copyCode(this)">Copier</button>
+                  </div>
+                  <pre><span class="cm">// Correcteur proportionnel — suivi de ligne</span>
+<span class="kw">int</span> mesure = G - D;                   <span class="cm">// erreur G-D</span>
+<span class="kw">int</span> erreur = (<span class="kw">int</span>)(kp * mesure);      <span class="cm">// kp = 0.04</span>
+vmg = vitesseBase - erreur;
+vmd = vitesseBase + erreur;
+<span class="fn">setvitesse</span>(vmg, vmd);
+
+<span class="cm">// LiDAR VL53L1X — arrêt obstacle à 15 cm</span>
+sensor.<span class="fn">setMeasurementTimingBudget</span>(<span class="num">20000</span>); <span class="cm">// 20 ms</span>
+<span class="kw">if</span> (distance > <span class="num">0</span> && distance <= <span class="num">150</span>)
+  etapeSuivante = ARRET_MUR;
+
+<span class="cm">// Fix bug persistance — réinit avant transition</span>
+<span class="kw">case</span> VIRAGE_G1:
+  <span class="kw">if</span> (phaseC == <span class="num">1</span> && C > seuil) {
+    <span class="fn">freins</span>();
+    phaseC = <span class="num">0</span>;  <span class="cm">// ← correction essentielle</span>
+    etapeSuivante = SUIVI_LIGNE2;
+  }
+  <span class="kw">break</span>;</pre>
+                </div>
+              </div>
+              <div>
+                <div class="specs-table">
+                  <div class="spec-row"><span class="spec-k">MCU</span><span class="spec-v">ATmega328P</span></div>
+                  <div class="spec-row"><span class="spec-k">Pilote moteur</span><span class="spec-v">VNH7070BASTR</span></div>
+                  <div class="spec-row"><span class="spec-k">Distance</span><span class="spec-v">VL53L1X (I²C)</span></div>
+                  <div class="spec-row"><span class="spec-k">Capteurs ligne</span><span class="spec-v">5× IR (ADC)</span></div>
+                  <div class="spec-row"><span class="spec-k">PWM</span><span class="spec-v">Timer1 Fast PWM</span></div>
+                  <div class="spec-row"><span class="spec-k">Budget LiDAR</span><span class="spec-v">20 ms</span></div>
+                  <div class="spec-row"><span class="spec-k">Seuil obstacle</span><span class="spec-v">15 cm</span></div>
+                  <div class="spec-row"><span class="spec-k">Correcteur</span><span class="spec-v">Proportionnel (kp=0.04)</span></div>
+                  <div class="spec-row"><span class="spec-k">CAO</span><span class="spec-v">KiCad</span></div>
+                </div>
+                <div class="livrable"><strong>Livrables :</strong> Carte moteur (schéma + routage + PCB soudé), firmware opérationnel, robot validé sur piste complète.</div>
+              </div>
+            </div>
+            <div class="proj-images">
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/3daef27b-5a67-459b-83a1-8df2946aab63/robot.jpeg" alt="Robot assemblé" loading="lazy">
+                <div class="proj-img-cap">Robot complet assemblé</div>
+              </div>
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/77918119-3af4-453a-a0fd-4a7cfa1ab110/schema_vnh.png" alt="Schéma KiCad" loading="lazy">
+                <div class="proj-img-cap">Schéma — VNH7070BASTR</div>
+              </div>
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/63970e10-7976-4850-83fe-552bc655fec7/routage_kicad.png" alt="Routage PCB" loading="lazy">
+                <div class="proj-img-cap">Routage PCB</div>
+              </div>
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/9326ec97-8db2-425a-baa6-bd8b9c328f6e/arduino_connector.png" alt="Connecteur" loading="lazy">
+                <div class="proj-img-cap">Interface PWM / INA / INB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 02 ARMOIRE ── -->
+      <div class="proj-item" id="p-armoire">
+        <div class="proj-header" onclick="toggleProj('armoire')">
+          <span class="proj-num">02</span>
+          <div class="proj-meta">
+            <div class="proj-name">Armoire industrielle &amp; automatisme</div>
+            <div class="proj-tagline">Câblage triphasé 400 V, VAT, EPI — automate Schneider M340, GRAFCET/Ladder sur maquette à vérins</div>
+          </div>
+          <div class="proj-pills">
+            <span class="proj-pill">Schneider M340</span>
+            <span class="proj-pill">GRAFCET</span>
+            <span class="proj-pill">400 V</span>
+          </div>
+          <span class="proj-chevron">▾</span>
+        </div>
+        <div class="proj-body" id="b-armoire">
+          <div class="proj-body-inner">
+            <div class="proj-detail-grid">
+              <div>
+                <div class="detail-section">// Contexte</div>
+                <p class="detail-p">Projet en binôme couvrant toute la chaîne d'une installation industrielle : lecture de folios, câblage armoire triphasé 400 V, raccordement automate, mise en service par étapes, puis programmation et essais sur maquette.</p>
+                <div class="detail-section">// Câblage & repérage</div>
+                <p class="detail-p">Lecture des folios, identification des repères de fils. Puissance triphasé 400 V (disjoncteurs, contacteurs KM1/KM2 AV/AR), commande 24 V DC (boutons, voyants, bobines, I/O). Chaque conducteur repéré, cheminé en goulottes.</p>
+                <div class="detail-section">// Sécurité — VAT & EPI</div>
+                <p class="detail-p">Application stricte de la procédure de Vérification d'Absence de Tension : consignation, test VAT sur source connue, mesure, re-test. EPI adaptés (écran facial anti-arc, gants isolants). Mise sous tension par paliers.</p>
+                <div class="detail-section">// Automatisme</div>
+                <p class="detail-p">Pilotage d'une maquette à vérins pneumatiques via M340 sous EcoStruxure. Cycle en GRAFCET transcrit en Ladder. Temporisation TON 2 s sur la transition capteur de rotation — évite un franchissement prématuré dû aux variations de signal en début de mouvement.</p>
+              </div>
+              <div>
+                <div class="specs-table">
+                  <div class="spec-row"><span class="spec-k">Automate</span><span class="spec-v">Schneider M340</span></div>
+                  <div class="spec-row"><span class="spec-k">Logiciel</span><span class="spec-v">EcoStruxure CE</span></div>
+                  <div class="spec-row"><span class="spec-k">Puissance</span><span class="spec-v">Triphasé 400 V</span></div>
+                  <div class="spec-row"><span class="spec-k">Commande</span><span class="spec-v">24 V DC</span></div>
+                  <div class="spec-row"><span class="spec-k">Sécurité</span><span class="spec-v">Allen-Bradley 2 ch.</span></div>
+                  <div class="spec-row"><span class="spec-k">Temporisation</span><span class="spec-v">TON 2 s</span></div>
+                  <div class="spec-row"><span class="spec-k">Langage</span><span class="spec-v">GRAFCET + Ladder</span></div>
+                  <div class="spec-row"><span class="spec-k">Habilitation</span><span class="spec-v">B1V</span></div>
+                </div>
+                <div class="livrable"><strong>Livrables :</strong> Armoire câblée et repérée, M340 GRAFCET/Ladder, maquette vérins opérationnelle sous boucle de sécurité double canal.</div>
+              </div>
+            </div>
+            <div class="proj-images">
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/02d0ef65-0fd8-4e3a-843b-49a33b1e7198/armoire_fini.jpeg" alt="Armoire câblée" loading="lazy">
+                <div class="proj-img-cap">Armoire câblée — contacteurs KM1/KM2, relais Allen-Bradley</div>
+              </div>
+              <div class="proj-img-wrap">
+                <img src="https://geii-portfolio-oussama-el-messaoudi.lovable.app/__l5e/assets-v1/769130c6-049e-4e91-8373-daaf11f95ed9/maquette.jpeg" alt="Maquette vérins" loading="lazy">
+                <div class="proj-img-cap">Maquette — vérins pneumatiques pilotés par M340</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 03 RÉGULATION ── -->
+      <div class="proj-item" id="p-regul">
+        <div class="proj-header" onclick="toggleProj('regul')">
+          <span class="proj-num">03</span>
+          <div class="proj-meta">
+            <div class="proj-name">Régulation de température</div>
+            <div class="proj-tagline">Analyse fonctionnelle, prototype 7 cartes sur plaque pastillée — boucle thermique 35–38 °C</div>
+          </div>
+          <div class="proj-pills">
+            <span class="proj-pill">Analogique</span>
+            <span class="proj-pill">Prototype</span>
+            <span class="proj-pill">Oscilloscope</span>
+          </div>
+          <span class="proj-chevron">▾</span>
+        </div>
+        <div class="proj-body" id="b-regul">
+          <div class="proj-body-inner">
+            <div class="proj-detail-grid">
+              <div>
+                <div class="detail-section">// Contexte</div>
+                <p class="detail-p">Projet de groupe : conception et réalisation d'un système de régulation de température (consigne 35–38 °C), organisé en 7 cartes fonctionnelles. Démarche complète — analyse fonctionnelle, prototypage sur plaque pastillée, soudure, documentation et validation par procédures d'essais.</p>
+                <div class="detail-section">// Démarche</div>
+                <p class="detail-p">Schéma fonctionnel complet (capteur, conditionnement, comparateur, commande, actionneur). Conception des schémas de chaque bloc, réalisation sur plaque pastillée, tests intermédiaires à l'oscilloscope après chaque sous-bloc, puis validation en boucle fermée.</p>
+              </div>
+              <div>
+                <div class="specs-table">
+                  <div class="spec-row"><span class="spec-k">Architecture</span><span class="spec-v">7 cartes fonct.</span></div>
+                  <div class="spec-row"><span class="spec-k">Consigne</span><span class="spec-v">35 – 38 °C</span></div>
+                  <div class="spec-row"><span class="spec-k">Support</span><span class="spec-v">Plaque pastillée</span></div>
+                  <div class="spec-row"><span class="spec-k">Instruments</span><span class="spec-v">Oscillo + multimètre</span></div>
+                </div>
+                <div class="livrable"><strong>Livrables :</strong> Prototype fonctionnel, dossier de fabrication, compte rendu avec procédures d'essais.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 04 MULTIMÈTRE ── -->
+      <div class="proj-item" id="p-multi">
+        <div class="proj-header" onclick="toggleProj('multi')">
+          <span class="proj-num">04</span>
+          <div class="proj-meta">
+            <div class="proj-name">Multimètre numérique</div>
+            <div class="proj-tagline">Conception PCB KiCad — chaîne V/A/Ω complète, afficheur 4 digits multiplexé, calibrage auto</div>
+          </div>
+          <div class="proj-pills">
+            <span class="proj-pill">KiCad</span>
+            <span class="proj-pill">Arduino Nano</span>
+            <span class="proj-pill">Instrumentation</span>
+          </div>
+          <span class="proj-chevron">▾</span>
+        </div>
+        <div class="proj-body" id="b-multi">
+          <div class="proj-body-inner">
+            <div class="proj-detail-grid">
+              <div>
+                <div class="detail-section">// Contexte</div>
+                <p class="detail-p">Conception complète d'un multimètre numérique sur carte PCB : étude théorique, calculs et choix des composants, routage KiCad, soudure, puis programmation d'un Arduino Nano avec multiplexage d'afficheur 4 digits.</p>
+                <div class="detail-section">// Réalisation</div>
+                <p class="detail-p">Circuit de conditionnement pour les modes voltmètre, ampèremètre et ohmmètre. Routage PCB, soudure, tests d'intégrité. Programmation : multiplexage afficheur 4 digits, sélection du mode par bouton, calibrage automatique.</p>
+              </div>
+              <div>
+                <div class="specs-table">
+                  <div class="spec-row"><span class="spec-k">CAO PCB</span><span class="spec-v">KiCad</span></div>
+                  <div class="spec-row"><span class="spec-k">MCU</span><span class="spec-v">Arduino Nano</span></div>
+                  <div class="spec-row"><span class="spec-k">Modes</span><span class="spec-v">V / A / Ω</span></div>
+                  <div class="spec-row"><span class="spec-k">Afficheur</span><span class="spec-v">4 digits multiplexé</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 05 SHIELD ── -->
+      <div class="proj-item" id="p-shield">
+        <div class="proj-header" onclick="toggleProj('shield')">
+          <span class="proj-num">05</span>
+          <div class="proj-meta">
+            <div class="proj-name">Shield Arduino Nano</div>
+            <div class="proj-tagline">Soudure CMS au four à refusion et traversante — validation fonctionnelle composant par composant</div>
+          </div>
+          <div class="proj-pills">
+            <span class="proj-pill">Soudure CMS</span>
+            <span class="proj-pill">Four à refusion</span>
+            <span class="proj-pill">Arduino</span>
+          </div>
+          <span class="proj-chevron">▾</span>
+        </div>
+        <div class="proj-body" id="b-shield">
+          <div class="proj-body-inner">
+            <div class="proj-detail-grid">
+              <div>
+                <div class="detail-section">// Contexte</div>
+                <p class="detail-p">Réalisation d'un shield Arduino Nano regroupant LEDs, boutons-poussoirs, potentiomètre et CTN. Objectif : maîtriser la soudure CMS au four à refusion et traversante au fer, puis valider chaque composant par programmation.</p>
+                <div class="detail-section">// Réalisation</div>
+                <p class="detail-p">Placement des composants CMS, dépôt de crème à braser, passage au four à refusion. Soudure manuelle des traversants. Vérification des soudures, puis téléversement de programmes de test pour valider chaque composant individuellement.</p>
+              </div>
+              <div>
+                <div class="specs-table">
+                  <div class="spec-row"><span class="spec-k">Technique</span><span class="spec-v">CMS + traversant</span></div>
+                  <div class="spec-row"><span class="spec-k">Four</span><span class="spec-v">Refusion</span></div>
+                  <div class="spec-row"><span class="spec-k">Composants</span><span class="spec-v">LED, BP, Potentio, CTN</span></div>
+                  <div class="spec-row"><span class="spec-k">MCU</span><span class="spec-v">Arduino Nano</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /proj-list -->
+  </div>
+</section>
+
+<!-- ═══ CONTACT ══════════════════════════════════════════ -->
+<section id="contact">
+  <div class="max-w">
+    <h2 class="contact-title reveal">Prenons<br><em>contact.</em></h2>
+    <p class="contact-sub reveal">N'hésitez pas à me contacter — par email, téléphone ou LinkedIn.</p>
+    <div class="contact-grid reveal">
+      <a href="mailto:oussama.el-messaoudi@etudiant.univ-reims.fr" class="contact-card">
+        <div class="cc-icon">✉</div>
+        <div class="cc-label">Email</div>
+        <div class="cc-val">oussama.el-messaoudi@etudiant.univ-reims.fr</div>
+      </a>
+      <a href="tel:+33749403078" class="contact-card">
+        <div class="cc-icon">📞</div>
+        <div class="cc-label">Téléphone</div>
+        <div class="cc-val">07 49 40 30 78</div>
+      </a>
+      <a href="https://www.linkedin.com/in/oussama-el-messaoudi-a301b132b/" target="_blank" rel="noopener" class="contact-card">
+        <div class="cc-icon">in</div>
+        <div class="cc-label">LinkedIn</div>
+        <div class="cc-val">oussama-el-messaoudi</div>
+      </a>
+      <div class="contact-card">
+        <div class="cc-icon">📍</div>
+        <div class="cc-label">Localisation</div>
+        <div class="cc-val">Troyes — Mobile partout en France</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Oussama El Messaoudi — BUT GEII · IUT de Troyes</span>
+  <span>oussama.el-messaoudi@etudiant.univ-reims.fr</span>
+</footer>
+
+<!-- ═══ JS ═════════════════════════════════════════════ -->
+<script>
+/* ── NAV scroll + burger ─────────────────────────────── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+}, {passive:true});
+
+const burger = document.getElementById('burger');
+const panel  = document.getElementById('nav-panel');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  panel.classList.toggle('open');
+});
+function closeNav() {
+  burger.classList.remove('open');
+  panel.classList.remove('open');
+}
+
+/* ── Nav active highlight ────────────────────────────── */
+const secs = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.nav-links a');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+e.target.id));
+    }
+  });
+}, {threshold:.35, rootMargin:'-60px 0px 0px 0px'});
+secs.forEach(s => io.observe(s));
+
+/* ── Reveal on scroll ────────────────────────────────── */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+    }
+  });
+}, {threshold:.1, rootMargin:'-40px 0px 0px 0px'});
+document.querySelectorAll('.reveal, .reveal-left').forEach(el => revObs.observe(el));
+
+/* ── Project accordion ───────────────────────────────── */
+function toggleProj(id) {
+  const item = document.getElementById('p-'+id);
+  const body = document.getElementById('b-'+id);
+  const isOpen = item.classList.contains('expanded');
+  // Ferme tout
+  document.querySelectorAll('.proj-item').forEach(i => i.classList.remove('expanded'));
+  document.querySelectorAll('.proj-body').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    item.classList.add('expanded');
+    body.classList.add('open');
+    setTimeout(() => item.scrollIntoView({behavior:'smooth', block:'nearest'}), 60);
+  }
+}
+
+/* ── Copy code ───────────────────────────────────────── */
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    setTimeout(() => btn.textContent = 'Copier', 2000);
+  });
+}
+
+/* ── Canvas starfield ────────────────────────────────── */
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [];
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  function mkStar() {
+    return {
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*.9+.2,
+      a: Math.random(),
+      da: (Math.random()-.5)*.008,
+      vx: (Math.random()-.5)*.12
+    };
+  }
+  function init() { resize(); stars = Array.from({length:120}, mkStar); }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s => {
+      s.x += s.vx; s.a += s.da;
+      if(s.a<0) s.da=Math.abs(s.da);
+      if(s.a>1) s.da=-Math.abs(s.da);
+      if(s.x<0) s.x=W; if(s.x>W) s.x=0;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(88,166,255,${s.a*.4})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', () => { resize(); });
+  init(); draw();
+})();
+
+/* ── Terminal typewriter ─────────────────────────────── */
+(function(){
+  const el = document.getElementById('terminal-body');
+  if(!el) return;
+  const lines = [
+    '<span class="t-cm">// firmware/robot_nav.c</span>',
+    '<span class="t-kw">enum</span> State {SUIVI, VIRAGE_G, VIRAGE_D, ARRET};',
+    '',
+    '<span class="t-kw">void</span> <span class="t-fn">loop</span>() {',
+    '  <span class="t-kw">int</span> err = G - D;',
+    '  vmg = base - <span class="t-fn">kp</span>(err);',
+    '  vmd = base + <span class="t-fn">kp</span>(err);',
+    '  <span class="t-fn">setvitesse</span>(vmg, vmd);',
+    '',
+    '  <span class="t-kw">if</span> (lidar <= <span class="t-val">150</span>) {',
+    '    state = ARRET;',
+    '    <span class="t-fn">freins</span>();',
+    '  }',
+    '}',
+    '',
+    '<span class="t-ok">✓ Compile OK — 0 erreurs</span>',
+    '<span class="t-ok">✓ Flash ATmega328P réussi</span>',
+  ];
+  let li=0, ci=0, html='';
+  function type() {
+    if(li>=lines.length) {
+      el.innerHTML = html + '<span class="t-cursor"></span>';
+      return;
+    }
+    if(ci<=lines[li].length) {
+      html = lines.slice(0,li).join('<br>') + (li>0?'<br>':'') + lines[li].slice(0,ci);
+      el.innerHTML = html + '<span class="t-cursor"></span>';
+      ci++;
+      setTimeout(type, ci===1?30:8);
+    } else {
+      html = lines.slice(0,li+1).join('<br>') + '<br>';
+      li++; ci=0;
+      setTimeout(type, li<lines.length ? 60 : 0);
+    }
+  }
+  setTimeout(type, 900);
+})();
+</script>
+</body>
+</html>
